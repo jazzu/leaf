@@ -24,8 +24,10 @@ class Array
     raise ArgumentError, "parameter hash expected (got #{options.inspect})" unless Hash === options
       Leaf::Collection.create options[:page] || 1,
                               options[:per_page] || 30,
-                              options[:total_entries] || self.length do |pager|
+                              options[:total_entries] || self.length,
+                              options[:reverse_content] || false do |pager|
       pager.replace self[pager.offset, pager.per_page].to_a
+      pager.reverse! if pager.reverse_content
     end
   end
 end

@@ -28,6 +28,10 @@ describe Leaf::Collection do
     result.current_page.should == 1
     result.size.should == 30
   end
+  
+  it "should have items in reversed order if told so" do
+    @simple.paginate(:page => 1, :per_page => 3, :reverse_content => true).should == %w( c b a )
+  end
 
   describe "old API" do
     it "should fail with numeric params" do
@@ -133,11 +137,11 @@ describe Leaf::Collection do
 
   private
   
-    def create(page = 2, limit = 5, total = nil, &block)
+    def create(page = 2, limit = 5, total = nil, reverse_content = false, &block)
       if block_given?
-        Leaf::Collection.create(page, limit, total, &block)
+        Leaf::Collection.create(page, limit, total, reverse_content, &block)
       else
-        Leaf::Collection.new(page, limit, total)
+        Leaf::Collection.new(page, limit, total, reverse_content)
       end
     end
 

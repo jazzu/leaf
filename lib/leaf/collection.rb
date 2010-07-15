@@ -20,25 +20,26 @@ module Leaf
   #   
   #   # now use Leaf::Collection directly or subclass it
   class Collection < Array
-    attr_reader :current_page, :per_page, :total_entries, :total_pages
+    attr_reader :current_page, :per_page, :total_entries, :total_pages, :reverse_content
 
     # Arguments to the constructor are the current page number, per-page limit
     # and the total number of entries. The last argument is optional because it
     # is best to do lazy counting; in other words, count *conditionally* after
     # populating the collection using the +replace+ method.
-    def initialize(page, per_page, total = nil)
+    def initialize(page, per_page, total = nil, reverse_content = false)
       @current_page = page.to_i
       raise InvalidPage.new(page, @current_page) if @current_page < 1
       @per_page = per_page.to_i
       raise ArgumentError, "`per_page` setting cannot be less than 1 (#{@per_page} given)" if @per_page < 1
+      @reverse_content = reverse_content
       
       self.total_entries = total if total
     end
 
     # Just like +new+, but yields the object after instantiation and returns it
     # afterwards. This is very useful for manual pagination:
-    def self.create(page, per_page, total = nil, &block)
-      pager = new(page, per_page, total)
+    def self.create(page, per_page, total = nil, reverse_content = false, &block)
+      pager = new(page, per_page, total, reverse_content)
       yield pager
       pager
     end
